@@ -1,0 +1,59 @@
+
+"PROCEDIMIENTO DE DESPLIEGUE COMPLETO DE 'MICROSERVICIO' LIGERO"
+ **************************************************************
+ 
+ Aplicando TODAS las consideraciones (apuntando a IMAGESTREAM):
+  
+1. "VALIDACI�N LOCALMENTE DE FUENTES DE MICROSERVICIO (PODMAN)":
+$ alias docker=podman
+$ docker images
+$ cd /c/WORKSPACE_JAVA/OPENSOURCE/dummy-microservicio-01
+$ docker build -t dummy-microservicio-01 .
+$ docker images
+$ docker run -i --rm -p 8080:8080 dummy-microservicio-01
+
+//TESTING: 
+$ curl http://localhost:8080/dummy-microservicio-01/get/personas
+
+
+2. "SUBIDA A IMAGE-REPOSITORY":
+$ alias docker=podman
+$ docker images
+$ docker tag dummy-microservicio-01 dummy-microservicio-01:latest
+$ docker login docker.io -u maktup -p 41816133 
+$ docker push 2af06b9aa001 docker.io/maktup/dummy-microservicio-01:latest
+
+
+3. "CREACI�N DE NAMESPACE & IMAGESTREAM (OPENSHIFT)": 
+//NAMESPACE: 
+$ oc create namespace dummy-csm
+
+//IMAGESTREAM: 
+$ oc import-image dummy-microservicio-01 --from=docker.io/maktup/dummy-microservicio-01:latest --confirm -n dummy-csm
+$ oc get imagestream.image.openshift.io -n dummy-csm
+
+
+4. "ASIGNACI�N DE PERMISOS, CREACI�N DE RECURSOS  & DESPLIEGUE (OPENSHIFT)": 
+//PERMISOS: 
+$ oc create role full-access-crga --namespace=dummy-csm --verb=* --resource=*
+$ oc create rolebinding full-access-crga-binding --namespace=dummy-csm --role=full-access-crga --serviceaccount=dummy-csm:default
+
+//DEPLOYMENT: 
+$ oc create deployment dummy-micro-01 --image=image-registry.openshift-image-registry.svc:5000/dummy-csm/dummy-microservicio-01 -n dummy-csm 
+$ oc set resources deployment dummy-micro-01 --requests=cpu=100m,memory=100Mi --limits=cpu=300m,memory=300Mi -n dummy-csm 
+
+//SERVICE: 
+$ oc expose deployment dummy-micro-01 --port=8080 --type=NodePort -n dummy-csm
+ 
+//ROUTE: 
+$ oc expose service dummy-micro-01 -n dummy-csm 
+
+//TESTING: 
+$ curl http://dummy-micro-01-dummy-csm.apps.6702b1c318cb82a554f762e4.ocp.techzone.ibm.com/dummy-microservicio-01/get/personas
+$ siege --concurrent=40 --reps=5 -v http://dummy-micro-01-dummy-csm.apps.6702b1c318cb82a554f762e4.ocp.techzone.ibm.com/dummy-microservicio-01/get/personas
+
+
+5. "ELIMINACION":
+$ oc delete all --all -n dummy-csm 
+$ oc delete ns dummy-csm --force
+
