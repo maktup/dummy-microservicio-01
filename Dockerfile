@@ -14,7 +14,7 @@
 #//----------------------------------------------------------------//#
 #//------------------------  [COMPILACION] ------------------------//#
 #//----------------------------------------------------------------//#
-FROM docker.io/library/maven:3-jdk-11-alpine as CONSTRUCTOR 
+FROM maven:3.9-eclipse-temurin-11-alpine as CONSTRUCTOR 
   
 #1. CREA DIRECTORIO 'build':  
 RUN mkdir -p /build
@@ -37,8 +37,8 @@ RUN mvn clean package
 
 #//----------------------------------------------------------------//#
 #//-------------------------  [EJECUCION] -------------------------//#
-#//----------------------------------------------------------------//#
-FROM adoptopenjdk/openjdk11:alpine-slim
+#//----------------------------------------------------------------//# 
+FROM eclipse-temurin:11-jdk-alpine
 
 #7. DOCUMENTANDO: 
 MAINTAINER cesar guerra cesarricardo_guerra19@hotmail.com
