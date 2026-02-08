@@ -3,7 +3,8 @@ package pe.com.capacitacion.controller;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable; 
+import org.springframework.web.bind.annotation.PathVariable;
+import pe.com.capacitacion.bean.Persona;
 import org.springframework.web.bind.annotation.*; 
  
 /**
@@ -13,49 +14,56 @@ import org.springframework.web.bind.annotation.*;
  @RestController
  @RequestMapping( "/dummy-microservicio-01" )    
  public class Micro01Controller{
-
-        private String vPersona_01 = "{ 'nombre': 'PAOLO GUERRERO', 'edad': 35, 'rol': 'CONSULTOR'   }";
-        private String vPersona_02 = "{ 'nombre': 'LUIS GUADALUPE', 'edad': 40, 'rol': 'PROGRAMADOR' }";     	 
-        private String vPersona_03 = "{ 'nombre': 'PEDRO SALAZAR',  'edad': 30, 'rol': 'ARQUITECTO'  }"; 
-        private String vPersona_04 = "[" + vPersona_01 + "," + vPersona_02 + "," + vPersona_03 + "]";	 
-	 
-        private List<String> listaPersonas = new ArrayList<String>();  
-        
+ 
+        private List<Persona> listaPersonas = null;
+       
 	   /**
 	    * consultarPersonaPorId	
 	    * @param  id
-	    * @return String 
+	    * @return List<Persona> 
 	    **/
-		@GetMapping( "/get/personas/{id}" )
-		public String  consultarPersonaPorId( @PathVariable( "id" ) long id ){
+		@GetMapping( value="/get/personas/{id}", produces="application/json" )
+		public List<Persona> consultarPersonaPorId( @PathVariable( "id" ) long id ){ 
 			   System.out.println( "'consultarPersonaPorId': id=" + id );
-    
-	           this.listaPersonas.add( this.vPersona_01 );	   
-	           this.listaPersonas.add( this.vPersona_02 );
-	           this.listaPersonas.add( this.vPersona_03 );
- 	           
-	           String vDatoJson = "";
-	           for( int i=0; i<this.listaPersonas.size(); i++ ){	        	   
-	        	    if( (i+1) == id ){
-	        	    	vDatoJson = this.listaPersonas.get( i ); 
-	        	    	break; 
-	        	    }  
+    		
+			   listaPersonas = new ArrayList<Persona>();
+			   
+			   this.listaPersonas.add( new Persona( 1, "PAOLO GUERRERO", 35, "CONSULTOR"   ) );
+			   this.listaPersonas.add( new Persona( 2, "LUIS GUADALUPE", 40, "PROGRAMADOR" ) );
+			   this.listaPersonas.add( new Persona( 3, "PEDRO SALAZAR",  30, "ARQUITECTO"  ) );			   
+ 	      	   					   
+			   Persona objPersonaTemp = null;
+			   
+			   for( int i=0; i<listaPersonas.size(); i++  ) {
+				    objPersonaTemp = listaPersonas.get( i ); 
+				    
+				    if( id == objPersonaTemp.getId() ){				    	
+				    	
+				    	this.listaPersonas.clear(); 
+				    	this.listaPersonas.add( objPersonaTemp ); 
+				    	
+				    	return this.listaPersonas; 
+				    }
 			   }
- 
-			   String objResponseMsg = vDatoJson;
-			   return objResponseMsg; 
+			   
+			   return this.listaPersonas; 
 		} 
 		
 	   /**
-	    * consultarPersonaPorId	
-	    * @return String 
+	    * consultarPersonas	
+	    * @return List<Persona> 
 	    **/
-		@GetMapping( "/get/personas" )
-		public String  consultarPersonas(){
+		@GetMapping( value="/get/personas", produces="application/json" )  
+		public List<Persona> consultarPersonas(){ 
 			   System.out.println( "'consultarPersonas'" );
- 
-			   String objResponseMsg = vPersona_04;
-			   return objResponseMsg; 
+			   
+			   listaPersonas = new ArrayList<Persona>(); 
+			
+			   this.listaPersonas.add( new Persona( 1, "PAOLO GUERRERO", 35, "CONSULTOR"   ) );
+			   this.listaPersonas.add( new Persona( 2, "LUIS GUADALUPE", 40, "PROGRAMADOR" ) );
+			   this.listaPersonas.add( new Persona( 3, "PEDRO SALAZAR",  30, "ARQUITECTO"  ) );				   
+	      	 
+			   return this.listaPersonas; 
 		} 
 		
  }
