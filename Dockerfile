@@ -14,7 +14,7 @@
 #//----------------------------------------------------------------//#
 #//------------------------  [COMPILACION] ------------------------//#
 #//----------------------------------------------------------------//#
-FROM maven:3-jdk-11-alpine as CONSTRUCTOR 
+FROM docker.io/library/maven:3-jdk-11-alpine as CONSTRUCTOR 
   
 #1. CREA DIRECTORIO 'build':  
 RUN mkdir -p /build
