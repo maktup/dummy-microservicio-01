@@ -37,12 +37,11 @@ import org.springframework.web.bind.annotation.*;
 			   for( int i=0; i<listaPersonas.size(); i++  ) {
 				    objPersonaTemp = listaPersonas.get( i ); 
 				    
-				    if( id == objPersonaTemp.getId() ){				    	
-				    	
+				    if( id == objPersonaTemp.getId() ){	 
 				    	this.listaPersonas.clear(); 
 				    	this.listaPersonas.add( objPersonaTemp ); 
 				    	
-				    	return this.listaPersonas; 
+				    	return this.listaPersonas;  
 				    }
 			   }
 			   

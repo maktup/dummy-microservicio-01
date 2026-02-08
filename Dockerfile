@@ -14,7 +14,7 @@
 #//----------------------------------------------------------------//#
 #//------------------------  [COMPILACION] ------------------------//#
 #//----------------------------------------------------------------//#
-FROM maven:3-jdk-8-alpine as CONSTRUCTOR 
+FROM maven:3-jdk-11-alpine as CONSTRUCTOR 
   
 #1. CREA DIRECTORIO 'build':  
 RUN mkdir -p /build
@@ -38,7 +38,7 @@ RUN mvn clean package
 #//----------------------------------------------------------------//#
 #//-------------------------  [EJECUCION] -------------------------//#
 #//----------------------------------------------------------------//#
-FROM adoptopenjdk/openjdk8:alpine-slim
+FROM adoptopenjdk/openjdk11:alpine-slim
 
 #7. DOCUMENTANDO: 
 MAINTAINER cesar guerra cesarricardo_guerra19@hotmail.com
